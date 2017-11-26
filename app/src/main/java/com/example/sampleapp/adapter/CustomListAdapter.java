@@ -19,13 +19,22 @@ public class CustomListAdapter extends BaseAdapter {
 
     private Activity activity=null;
     private MyData myData;
-    List<Row> rows;
+    private List<Row> rows;
 
     public CustomListAdapter(Activity activity,MyData myData){
         this.activity=activity;
         this.myData=myData;
         rows= myData.getRows();
     }
+     //View holder pattern for smooth scrolling of listview
+    private static class ViewHolder{
+
+        private TextView title_tv;
+        private TextView description_tv;
+        private ImageView image_custom;
+
+    }
+
 
     @Override
     public int getCount() {
@@ -45,26 +54,31 @@ public class CustomListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
 
+        ViewHolder holder;
+
         if(view==null){
             view=activity.getLayoutInflater().inflate(R.layout.listitem, null, false);
+            holder=new ViewHolder();
+            holder.title_tv=view.findViewById(R.id.title_tv);
+            holder.description_tv=view.findViewById(R.id.description_tv);
+            holder.image_custom= view.findViewById(R.id.thumb_image);
+            view.setTag(holder);
+        }
+     else{
+          holder= (ViewHolder) view.getTag();
+        }
 
-            rows.get(position).getTitle();
-            TextView title_tv= view.findViewById(R.id.title_tv);
-            title_tv.setText(rows.get(position).getTitle());
-            TextView description_tv= view.findViewById(R.id.description_tv);
-            description_tv.setText(rows.get(position).getDescription());
-            Object strUrl= rows.get(position).getImageHref();
-            ImageView image_custom= view.findViewById(R.id.thumb_image);
-            if(strUrl!=null){
+        holder.title_tv.setText(rows.get(position).getTitle());
+        holder.description_tv.setText(rows.get(position).getDescription());
+        Object strUrl= rows.get(position).getImageHref();
+        if(strUrl!=null){
                 Glide.with(activity)
                         .load(strUrl)
-                        .into(image_custom);
+                        .into(holder.image_custom);
             }else {
 
-                image_custom.setImageResource(R.mipmap.default_image);
+                holder.image_custom.setImageResource(R.mipmap.default_image);
             }
-
-        }
         return view;
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -39,7 +40,8 @@ public class CustomListFragment extends Fragment {
    private TextView load_tv;
    private OnFragmentInteractionListener mListener;
    private CustomListAdapter customListAdapter;
-    MyData myData;
+   private SwipeRefreshLayout swipe_layout;
+   MyData myData;
 
     public CustomListFragment() {
         // Required empty public constructor
@@ -55,7 +57,9 @@ public class CustomListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.fragment_list, container, false);
         load_tv=view.findViewById(R.id.loading_tv);
-
+        swipe_layout=view.findViewById(R.id.swipe_refresh_layout);
+        swipe_layout.setColorSchemeResources(R.color.refresh,R.color.refresh1,R.color.refresh2);
+        swipe_layout.setOnRefreshListener(swipeListner);
         listView=view.findViewById(R.id.data_lv);
         //added to hide the default app name in the title.
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -65,6 +69,14 @@ public class CustomListFragment extends Fragment {
         return view;
 
     }
+
+    SwipeRefreshLayout.OnRefreshListener swipeListner= new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            getData();
+            swipe_layout.setRefreshing(false);
+        }
+    };
 
     private void getData(){
 
